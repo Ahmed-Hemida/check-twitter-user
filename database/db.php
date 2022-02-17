@@ -1,4 +1,5 @@
 <?php
+  session_start();
 // namespace db;
 class db{
      const  servername = "localhost";
@@ -48,7 +49,7 @@ class db{
         $sql="CREATE TABLE feedback ( id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         userID INT(6) UNSIGNED,
          FOREIGN KEY (userID) REFERENCES users(id),
-        check_status bit NOT NULL, #1 to yes 0 to no 
+        check_status INT(1) NOT NULL, #1 to yes 0 to no 
         feedback VARCHAR(512), 
         create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
         )";
@@ -60,10 +61,7 @@ class db{
         (`firstname`, `lastname`, `userName`, `password`, `phone`, `img`, `gender`)
          VALUES (?,?,?,?,?,?,?)");
         // die ($stmt);
-        if($stmt){ 
-            echo  ("not  error ");
-        }
-        else{
+        if(!$stmt){
            die  (" error ");
         }
 
@@ -80,9 +78,55 @@ class db{
         $stmt->close();
         return $check;
     }
+    public static function insertFeedBack(){
+       
+        $stmt =self::$connection->prepare("INSERT INTO `feedback`
+         (`userID`, `check_status`, `feedback`)
+          VALUES (?,?,?)");
+         // die ($stmt);
+         if($stmt){ 
+             echo  ("not  error ");
+         }
+         else{
+            die  (" error ");
+         }
+        
+         $stmt->bind_param( "sss",
+         $_SESSION['userID'],
+         $_POST['check_status'],
+         $_POST['feedback']);
+         $check =$stmt->execute();
+         
+         $stmt->close();
+         header("Location: /check-twitter-user/profile");
+         return $check;
+     }
+       public static function getUserFeadBack(){
+        $stmt =self::$connection->prepare("SELECT * FROM `feedback` WHERE userID=?" );
+         // die ($stmt);
+         if(!$stmt){ 
+            die  (" error ");
+         }
+         $stmt->bind_param( "s", $_SESSION['userID']);
+          $check =$stmt->execute();
+          $stmt_result = $stmt->get_result();
+        //   die(var_dump($stmt_result));
+      
+        $data=array();
+        if ($stmt_result->num_rows > 0) {
+            // output data of each row
+            while($row = $stmt_result->fetch_assoc()) {
+                $data[] = ['id'=>$row['id'],'check_status'=>$row['check_status'],'feedback'=>$row['feedback']];
+            //   header("Location: /check-twitter-user/profile");
+            }
+          } 
+          $stmt->store_result();
+         $stmt->close();
+         print_r(json_encode($data));
+     }
     public static function login(){
        
-        $stmt =self::$connection->prepare("SELECT  `userName`,`firstname`,`lastname`, `img` FROM `users` WHERE userName=? AND password=?  LIMIT 1" );
+        $stmt =self::$connection->prepare("SELECT `id`, `userName`,`firstname`,`lastname`, `img` FROM `users` WHERE userName=? AND password=?  LIMIT 1" );
          // die ($stmt);
          if(!$stmt){ 
             die  (" error ");
@@ -98,7 +142,8 @@ class db{
         if ($stmt_result->num_rows > 0) {
             // output data of each row
             while($row = $stmt_result->fetch_assoc()) {
-              session_start();
+            
+              $_SESSION['userID']= $row["id"];
               $_SESSION['userName']= $row["userName"];
               $_SESSION['imgUrl']= $row["img"];
               $_SESSION['Auth']=true;
@@ -113,13 +158,7 @@ class db{
          $stmt->close();
          return $check;
      }
-     public static function logout(){
-            // remove all session variables
-            session_unset();
 
-            // destroy the session
-            session_destroy();
-     }
 
     public static function closeConnection(){
     return self::$connection->close();

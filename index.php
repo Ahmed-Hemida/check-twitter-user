@@ -1,7 +1,8 @@
 <?php 
-include('database/db.php');
-$filename =  $_SERVER['REQUEST_URI'];
 
+include('Controllers/controller.php');
+$filename =  $_SERVER['REQUEST_URI'];
+ $auth= (isset($_SESSION['Auth'])&&$_SESSION['Auth'])?true:false;
 
 switch($filename){
     case "/check-twitter-user/registration": 
@@ -11,49 +12,36 @@ switch($filename){
         require __DIR__ . '/view/login.html';
     break;
     case "/check-twitter-user/profile": 
+        if(!$auth)header("Location: /check-twitter-user/");
     require __DIR__ . '/view/profile.php';
-break;
+    break;
+    case "/check-twitter-user/logOut": 
+        if(!$auth)header("Location: /check-twitter-user/");
+        controller::logOut();
+    break;
     case "/check-twitter-user/login": 
-       
-        echo db::openConnectionWithDB()?"Connection open  <br>":"not open <br>";
-           db::login();
-         db::closeConnection();
+        controller::login();
+        if(!$auth)header("Location: /check-twitter-user/");
+    break;
+    case "/check-twitter-user/feedback": 
+        if(!$auth)header("Location: /check-twitter-user/");
+        controller::createFeedback();
+    break;
+    case "/check-twitter-user/get/user/feedback": 
+        if(!$auth)header("Location: /check-twitter-user/");
+        controller::getUserFeedback();
     break;
     case "/check-twitter-user/create/user": 
-    echo db::openConnectionWithDB()?"Connection open  <br>":"not open <br>";
-        db::insertUser();
-    db::closeConnection();
-     header("Location: /check-twitter-user/");
+        controller::createUser();
     break;
-    case "/check-twitter-user/migration/": 
-        // require __DIR__ . '/view/login.html'; 
-      try{  
-      echo  db::openConnectionWithoutDB()?"Connection open <br>":"not open  <br>";
-      echo db::createDB()?"createDB  <br>":"not createDB <br>";
-      /*echo*/ db::closeConnection();
-      echo db::openConnectionWithDB()?"Connection open  <br>":"not open <br>";
-      echo db::createUserTable()?"createUserTable  <br>":"not createUserTable <br>";
-      echo db::createUserFeedBackTable()?"createUserFeedBackTable  <br>":"not createUserFeedBackTable <br>";
-      echo ' <div class="registration">
-      <a  href="/check-twitter-user/"> login now</a>
-     </div>';
-     db::closeConnection();
-     }catch (Exception $e) {
-        echo 'Error: ' . $e->getMessage();
-    }
+    case "/check-twitter-user/migration": 
+        controller::migration();
     break;
     case "/check-twitter-user/Drop/DataBase/": 
-      try{  
-        echo  db::openConnectionWithoutDB()?"Connection open <br>":"not open  <br>";
-            echo db::dropDB()?"dropDB  <br>":"not dropDB <br>";
-      db::closeConnection();
-      }catch (Exception $e) {
-        echo 'Error: ' . $e->getMessage();
-    }
+        controller::DrobDB();
     break;
     default:
-    echo $filename,"<br> asd";
-    http_response_code(404);
+    if(!$auth)header("Location: /check-twitter-user/");
     break;
 
 }
