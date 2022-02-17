@@ -82,23 +82,43 @@ class db{
     }
     public static function login(){
        
-        $stmt =self::$connection->prepare("SELECT  `userName`,`firstname`, `img` FROM `users` WHERE userName=? AND password=?" );
+        $stmt =self::$connection->prepare("SELECT  `userName`,`firstname`,`lastname`, `img` FROM `users` WHERE userName=? AND password=?  LIMIT 1" );
          // die ($stmt);
-         if($stmt){ 
-             echo  ("not  error ");
-         }
-         else{
+         if(!$stmt){ 
             die  (" error ");
          }
+        
+        
          $stmt->bind_param( "ss",
          $_POST['userName'],
          $_POST['password']);
           $check =$stmt->execute();
           $stmt_result = $stmt->get_result();
-        echo var_dump($stmt_result);
+        //   die(var_dump($stmt_result));
+        if ($stmt_result->num_rows > 0) {
+            // output data of each row
+            while($row = $stmt_result->fetch_assoc()) {
+              session_start();
+              $_SESSION['userName']= $row["userName"];
+              $_SESSION['imgUrl']= $row["img"];
+              $_SESSION['Auth']=true;
+              $_SESSION['name']= $row["firstname"]." ".$row["lastname"];
+              $_SESSION['token']=hash("sha256",  rand());
+              header("Location: /check-twitter-user/profile");
+            }
+          } else {
+            echo "username or password isn't correct ";
+          }
         $stmt->store_result();
          $stmt->close();
          return $check;
+     }
+     public static function logout(){
+            // remove all session variables
+            session_unset();
+
+            // destroy the session
+            session_destroy();
      }
 
     public static function closeConnection(){
@@ -106,4 +126,3 @@ class db{
     }
 
 }
-?>
