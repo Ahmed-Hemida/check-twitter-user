@@ -94,11 +94,11 @@
 			var info = document.querySelector('#twit-post');
 			var card="<div class='card p-25'><h1> Oops, something was wrong with server :(!</h1></div>";
 				info.innerHTML=card;
-            alert("Oops, something went wrong!");
+            // alert("Oops, something went wrong!");
         }
 
     });
-debugger;
+    
 	$.ajax({
         url: "/check-twitter-user/get/user/feedback",
         type: "GET",

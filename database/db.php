@@ -6,6 +6,7 @@ class db{
      const  username = "root";
      const  password = "";
      const  dbname="check_twitter";
+     const  dbPort="4306";
      protected static  $connection;
     /*
     $stmt = $mysqli->prepare("SELECT * FROM myTable WHERE name = ? AND age = ?");
@@ -14,11 +15,11 @@ class db{
     */
     public static function openConnectionWithoutDB(){
         
-        self::$connection = new mysqli(db::servername, db::username, db::password);
+        self::$connection = new mysqli(db::servername, db::username, db::password,'',db::dbPort);
          return !self::$connection->connect_error;
     }
     public static function openConnectionWithDB(){
-        self::$connection = new mysqli(db::servername, db::username, db::password,db::dbname);
+        self::$connection = new mysqli(db::servername, db::username, db::password,db::dbname,db::dbPort);
         return !self::$connection->connect_error;
     }
     public static function createDB(){
@@ -120,7 +121,8 @@ class db{
             //   header("Location: /check-twitter-user/profile");
             }
           } 
-          $stmt->store_result();
+
+        //   $stmt->store_result();
          $stmt->close();
          print_r(json_encode($data));
      }
