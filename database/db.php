@@ -99,7 +99,7 @@ class db{
          $check =$stmt->execute();
          
          $stmt->close();
-         header("Location: /check-twitter-user/profile");
+         header("Location: Location: /check-twitter-user/profile");
          return $check;
      }
        public static function getUserFeadBack(){
@@ -118,7 +118,7 @@ class db{
             // output data of each row
             while($row = $stmt_result->fetch_assoc()) {
                 $data[] = ['id'=>$row['id'],'check_status'=>$row['check_status'],'feedback'=>$row['feedback']];
-            //   header("Location: /check-twitter-user/profile");
+            //   header("Location: Location: /check-twitter-user/profile");
             }
           } 
 
@@ -151,7 +151,7 @@ class db{
               $_SESSION['Auth']=true;
               $_SESSION['name']= $row["firstname"]." ".$row["lastname"];
               $_SESSION['token']=hash("sha256",  rand());
-              header("Location: /check-twitter-user/profile");
+              header("Location: Location: /check-twitter-user/profile");
             }
           } else {
             echo "username or password isn't correct ";
