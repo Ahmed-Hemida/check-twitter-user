@@ -6,7 +6,7 @@ class db{
      const  username = "root";
      const  password = "";
      const  dbname="check_twitter";
-     const  dbPort="4306";
+     const  dbPort="3306";
      protected static  $connection;
     /*
     $stmt = $mysqli->prepare("SELECT * FROM myTable WHERE name = ? AND age = ?");

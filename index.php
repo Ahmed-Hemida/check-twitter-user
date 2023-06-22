@@ -6,6 +6,8 @@ $filename =  $_SERVER['REQUEST_URI'];
  $project_name = basename(dirname(__FILE__));
  $auth= (isset($_SESSION['Auth'])&&$_SESSION['Auth'])?true:false;
  $url=preg_replace('/^\/'.$project_name.'/','',$filename);
+//  print_r([$url,$project_name,$filename,$auth?"a":"w"]);
+//  die();
  switch($url){
      case "/registration": 
         require __DIR__ . '/view/registration.html';
