@@ -1,6 +1,9 @@
 <?php
-  session_start();
-// namespace db;
+  
+namespace database;
+
+session_start();
+  
 class db{
      const  servername = "localhost";
      const  username = "root";
@@ -50,7 +53,7 @@ class db{
         $sql="CREATE TABLE feedback ( id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         userID INT(6) UNSIGNED,
          FOREIGN KEY (userID) REFERENCES users(id),
-        check_status INT(1) NOT NULL, #1 to yes 0 to no 
+        check_status INT(1) NOT NULL, #1 to yes 0 to no qwdq
         feedback VARCHAR(512), 
         create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
         )";
@@ -67,7 +70,7 @@ class db{
         }
 
         $stmt->bind_param( "sssssss",
-        $_POST['firstName'],
+        $_POST['firstName'],//dadrsaydfa
         $_POST['lastName'],
         $_POST['userName'],
         $_POST['password'],
@@ -99,7 +102,7 @@ class db{
          $check =$stmt->execute();
          
          $stmt->close();
-         header("Location: Location: /check-twitter-user/profile");
+         header("Location: /check-twitter-user/profile");
          return $check;
      }
        public static function getUserFeadBack(){
@@ -118,7 +121,7 @@ class db{
             // output data of each row
             while($row = $stmt_result->fetch_assoc()) {
                 $data[] = ['id'=>$row['id'],'check_status'=>$row['check_status'],'feedback'=>$row['feedback']];
-            //   header("Location: Location: /check-twitter-user/profile");
+            //   header("Location:  /check-twitter-user/profile");
             }
           } 
 
@@ -128,7 +131,9 @@ class db{
      }
     public static function login(){
        
-        $stmt =self::$connection->prepare("SELECT `id`, `userName`,`firstname`,`lastname`, `img` FROM `users` WHERE userName=? AND password=?  LIMIT 1" );
+        $stmt =self::$connection->prepare("SELECT `id`, `userName`,`firstname`,`lastname`, `img`
+        
+                                      FROM `users` WHERE userName=? AND password=?  LIMIT 1" );
          // die ($stmt);
          if(!$stmt){ 
             die  (" error ");
@@ -151,7 +156,7 @@ class db{
               $_SESSION['Auth']=true;
               $_SESSION['name']= $row["firstname"]." ".$row["lastname"];
               $_SESSION['token']=hash("sha256",  rand());
-              header("Location: Location: /check-twitter-user/profile");
+              header("Location: /check-twitter-user/profile");
             }
           } else {
             echo "username or password isn't correct ";

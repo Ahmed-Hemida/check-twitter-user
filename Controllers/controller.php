@@ -1,9 +1,13 @@
 <?php
-include('database/db.php');
+
+namespace Controllers;
+
+use database\db;
+
 class controller{
-
-        public static function login(){
-
+    static $name = 'ahmed';
+        public static function login(){ 
+            
                 echo db::openConnectionWithDB()?"Connection open  <br>":"not open <br>";
                 db::login();
                 db::closeConnection();
